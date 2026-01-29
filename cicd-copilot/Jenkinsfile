@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Cloning the Code') {
+            steps {
+                git branch:'main', url: "https://github.com/Pravesh-Sudha/ai-devops-agent.git"
+            }
+        }
+
+        stage('Navigate inside the dir') {
+            steps {
+                sh 'cd cicd-copilot/'
+            }
+        }
+
+        stage('Building the Docker Image') {
+            steps {
+                sh '''
+                docker build -t cicd-copilot:v1 . > docker_build.log 2>&1 || true
+                '''
+            }
+        }
+        stage('AI Failure Analysis') {
+            when {
+                expression { fileExists('docker_build.log') }
+            }
+            steps {
+                sh '''
+                echo "Sending logs to AI agent..."
+                cat docker_build.log
+                '''
+            }
+        }
+        /* stage('Running the Container') {
+            steps {
+                sh 'docker run --name book-reader -d -p 3000:3000 book-read-app:v1'
+            }
+        }
+        stage('Access the App') {
+            steps {
+                echo 'Your Application is running on PublicIPAddress of your instance followed by port 3000'
+            }
+        }*/
+    }
+    post {
+        failure {
+            echo "Pipeline failed — logs captured for AI analysis"
+        }
+    }
+}
