@@ -7,15 +7,9 @@ pipeline {
                 git branch:'main', url: "https://github.com/Pravesh-Sudha/ai-devops-agent.git"
             }
         }
-
-        stage('Navigate inside the dir') {
-            steps {
-                sh 'cd cicd-copilot/'
-            }
-        }
-
         stage('Building the Docker Image') {
             steps {
+                sh 'cd cicd-copilot/'
                 sh '''
                 docker build -t cicd-copilot:v1 . > docker_build.log 2>&1 || true
                 '''
