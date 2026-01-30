@@ -12,7 +12,7 @@ pipeline {
                 dir('cicd-copilot') {
                     sh "ls -l"
                     sh '''
-                    docker build -t cicd-copilot:v1 . > docker_build.log 2>&1 || true
+                    docker build -f Dockerfile -t cicd-copilot:v1 . > docker_build.log 2>&1 || true
                     '''
                 }
             }
