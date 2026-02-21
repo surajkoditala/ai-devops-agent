@@ -13,7 +13,7 @@ pipeline {
                 script {
                     FAILED_STAGE = env.STAGE_NAME
                 }
-                git branch: 'master',
+                git branch: 'main',
                     url: "https://github.com/Pravesh-Sudha/ai-devops-agent.git"
             }
         }
