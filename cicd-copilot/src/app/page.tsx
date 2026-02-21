@@ -25,7 +25,7 @@ export default function Home() {
         <motion.li 
         whileHover={{scale:1.1}}
         whileTap={{scale:0.9}}
-        transition={{type:'spring',damping:50,mass:0.75}}
+        transition={{type:'spring',damping:50,mass:0.25}}
         initial={{opacity:0,x:200*(i+1)}}
         animate={{opacity:1,x:0}}
         key={i}>
@@ -37,8 +37,7 @@ export default function Home() {
     }
   </ul>
 </div>
-
-      </div>
+</div>
 
   </div>
     </main>
