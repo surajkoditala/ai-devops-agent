@@ -102,13 +102,8 @@ def lambda_handler(event, context):
         prompt = build_prompt(stage, logs)
         ai_analysis = call_gemini(prompt)
 
-        # Simple status logic
-        failure_category = ai_analysis.get("failure_category", "unknown")
-
-        status = "SUCCESS" if failure_category == "unknown" else "FAILURE"
-
         response = {
-            "status": status,
+            "status": "FAILURE",
             "job": job,
             "build_id": build_id,
             "stage": stage,
