@@ -13,7 +13,7 @@ pipeline {
                 script {
                     FAILED_STAGE = env.STAGE_NAME
                 }
-                git branch: 'main',
+                git branch: 'master',
                     url: "https://github.com/Pravesh-Sudha/ai-devops-agent.git"
             }
         }
@@ -39,7 +39,7 @@ pipeline {
                 }
                 sh '''
                   docker run --name cicd-copilot \
-                    -d -p 3000:3000 cicd-copilot:v1
+                    -d -p 3000:3000 cicd-copilot:v2
                 '''
             }
         }
@@ -58,22 +58,20 @@ pipeline {
 
             env.AI_STAGE = FAILED_STAGE
 
-            sh '''
+            sh """
             echo "📦 Preparing AI failure payload..."
 
             jq -n \
               --arg stage "$AI_STAGE" \
               --arg job "$JOB_NAME" \
               --arg build_id "$BUILD_ID" \
-              --arg logs "$(tail -n 200 ${LOG_FILE} 2>/dev/null)" \
+              --arg logs "\$(tail -n 200 ${LOG_FILE} 2>/dev/null)" \
               '{
-                stage: $stage,
-                job: $job,
-                build_id: $build_id,
-                logs: $logs
+                stage: \$stage,
+                job: \$job,
+                build_id: \$build_id,
+                logs: \$logs
               }' > ai_payload.json
-
-            cat ai_payload.json
 
             echo "📤 Sending failure context to AI Copilot"
 
@@ -82,10 +80,30 @@ pipeline {
               --cli-binary-format raw-in-base64-out \
               --payload file://ai_payload.json \
               ai_response.json
-
-            echo "🧠 AI Analysis Result:"
-            cat ai_response.json
-            '''
+            
+            
+            jq -r '
+              .body | fromjson |
+              "==============================",
+              "🧠 AI Copilot Analysis",
+              "==============================",
+              "",
+              "Stage: \\(.stage)",
+              "Category: \\(.analysis.failure_category)",
+              "",
+              "Root Cause:",
+              "\\(.analysis.root_cause)",
+              "",
+              "Actionable Fixes:",
+              (.analysis.actionable_fixes[] | "- " + .),
+              "",
+              "Suggested Patch:",
+              "File: \\(.analysis.suggested_patch.file)",
+              "Line: \\(.analysis.suggested_patch.line)",
+              "Fix:  \\(.analysis.suggested_patch.fix)",
+              "=============================="
+            ' ai_response.json
+            """
         }
     }
 }
