@@ -1,2 +1,6 @@
 terraform-review-agent/event.json
 terraform-review-agent/terraform/.terraform*
+cicd-copilot/.next
+cicd-copilot/node_modules
+cicd-copilot/docker_build.log
+cicd-copilot/terra-config/.terraform*

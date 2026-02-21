@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM node:20-apine AS builder
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -18,7 +18,7 @@ RUN npm run build
 RUN npm ci --only=production
 
 # Stage 2: Production Stage
-FROM node:20-apine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
