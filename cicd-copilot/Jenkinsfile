@@ -39,16 +39,33 @@ pipeline {
                 }
                 sh '''
                   docker run --name cicd-copilot \
-                    -d -p 3000:3000 cicd-copilot:v2 > ${LOG_FILE} 2>&1
+                    -d -p 3000:3000 cicd-copilot:v1 > ${LOG_FILE} 2>&1
                 '''
-            }
-        }
-
-        stage('Access the App') {
-            steps {
                 echo 'Your application is running on port 3000 🚀'
             }
         }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    FAILED_STAGE = env.STAGE_NAME
+                }
+        
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+        
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ${LOG_FILE} 2>&1'
+        
+                    sh 'docker tag cicd-copilot:v1 $DOCKER_USER/cicd-copilot:v1 ${LOG_FILE} 2>&1'
+        
+                    sh 'docker push $DOCKER_USER/cicd-copilot:v1 >> ${LOG_FILE} 2>&1'
+                    
+                }
+            }
+}
     }
 
     post {
