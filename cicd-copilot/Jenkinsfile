@@ -57,9 +57,9 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
         
-                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ${LOG_FILE} 2>&1'
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin >> ${LOG_FILE} 2>&1'
         
-                    sh 'docker tag cicd-copilot:v1 $DOCKER_USER/cicd-copilot:v1 ${LOG_FILE} 2>&1'
+                    sh 'docker tag cicd-copilot:v1 $DOCKER_USER/cicd-copilot:v1 >> ${LOG_FILE} 2>&1'
         
                     sh 'docker push $DOCKER_USER/cicd-copilot:v1 >> ${LOG_FILE} 2>&1'
                     
