@@ -18,7 +18,7 @@ RUN npm run build
 RUN npm ci --only=production
 
 # Stage 2: Production Stage
-FROM node:20-apine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
