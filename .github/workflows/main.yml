@@ -4,6 +4,10 @@ on:
   pull_request:
     paths: "terraform-review-agent/**"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform-ai-review:
     runs-on: ubuntu-latest  
